@@ -6,13 +6,27 @@ import java.util.ResourceBundle;
 
 /**
  * 读取配置文件属性工具类
- * @author dajiangtai
- * created by 2016-10-29
+ * 
+ * @author dajiangtai created by 2016-10-29
  */
 public class LoadPropertyUtil {
-	
-	//读取优酷配置文件
-	public static String getYOUKU(String key){
+
+	// 读取爱奇艺配置文件
+	public static String getIQIYI(String key) {
+		String value = "";
+		Locale locale = Locale.getDefault();
+		try {
+			ResourceBundle localResource = ResourceBundle.getBundle("iqiyi",
+					locale);
+			value = localResource.getString(key);
+		} catch (MissingResourceException mre) {
+			value = "";
+		}
+		return value;
+	}
+
+	// 读取优酷配置文件
+	public static String getYOUKU(String key) {
 		String value = "";
 		Locale locale = Locale.getDefault();
 		try {
@@ -24,7 +38,22 @@ public class LoadPropertyUtil {
 		}
 		return value;
 	}
+
+	// 读取公共配置文件
+	public static String getConfig(String key) {
+		String value = "";
+		Locale locale = Locale.getDefault();
+		try {
+			ResourceBundle localResource = ResourceBundle.getBundle("config",
+					locale);
+			value = localResource.getString(key);
+		} catch (MissingResourceException mre) {
+			value = "";
+		}
+		return value;
+	}
+
 	public static void main(String[] args) {
-		System.out.println(getYOUKU("parseAllNumber"));
+		System.out.println(getConfig("threadNum"));
 	}
 }

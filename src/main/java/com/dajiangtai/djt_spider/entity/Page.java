@@ -3,6 +3,8 @@ package com.dajiangtai.djt_spider.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.solr.client.solrj.beans.Field;
+
 /**
  * 存储页面信息实体类
  * @author dajiangtai
@@ -13,26 +15,35 @@ public class Page {
 	//页面内容
 	private String content;
 	//总播放量
+	@Field
 	private String allnumber;
 	//每日播放增量
+	@Field
 	private String daynumber;
 	//评论数
+	@Field
 	private String commentnumber;
 	//收藏数
+	@Field
 	private String collectnumber;
 	//赞
+	@Field
 	private String supportnumber;
 	//踩
+	@Field
 	private String againstnumber;
 	
 	//电视剧名称
+	@Field
 	private String tvname;
 	//页面url
+	@Field
 	private String url;
 	//子集数据
 	private String episodenumber;
 	
 	//电视剧id
+	@Field
 	private String tvId;
 	
 	//存储电视剧url（包含列表url和详情页url）

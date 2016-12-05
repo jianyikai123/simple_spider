@@ -20,6 +20,8 @@ import com.dajiangtai.djt_spider.util.RegexUtil;
 public class YOUKUProcessService implements IProcessService {
 	public void process(Page page) {
 		// TODO Auto-generated method stub
+		
+		System.out.println("正在解析优酷页面信息！！！！！！！！！！！！！！！");
 		String content = page.getContent();
 		
 		HtmlCleaner htmlCleaner = new HtmlCleaner();
@@ -28,21 +30,34 @@ public class YOUKUProcessService implements IProcessService {
 		if(page.getUrl().startsWith("http://www.youku.com/show_page")){
 			//解析电视剧详情页
 			parseDetail(page,rootNode);
+			//System.out.println("解析电视剧详情页！！！！！！！！！！！！！！！！！！！！！");
 		}else{
+			//System.out.println("解析电视剧列表页！！！！！！！！！！！！！！！！！！！！！");
 			String nextUrl = HtmlUtil.getAttributeByName(rootNode, LoadPropertyUtil.getYOUKU("nextUrlRegex"), "href");
 			if(nextUrl != null){
 				page.addUrl(nextUrl);
 			}
-			System.out.println("urlList="+nextUrl);
+			//System.out.println("urlList="+nextUrl);
 			//获取详情页的url
 			try {
 				Object[] evaluateXPath = rootNode.evaluateXPath(LoadPropertyUtil.getYOUKU("eachDetailUrlRegex"));
 				if(evaluateXPath.length>0){
 					for(Object object :evaluateXPath){
 						TagNode tagNode = (TagNode) object;
-						String detailUrl = tagNode.getAttributeByName("href");
-						page.addUrl(detailUrl);
-						System.out.println("detailUrl="+detailUrl);
+						
+						//提取每日播放增量
+						String daynumber = HtmlUtil.getFieldByRegex(tagNode, LoadPropertyUtil.getYOUKU("eachDetailUrlRegex_span"), LoadPropertyUtil.getYOUKU("commonRegex"));
+						
+						
+						//提取电视剧详情url
+						String url = HtmlUtil.getAttributeByName(tagNode, LoadPropertyUtil.getYOUKU("eachDetailUrlRegex_a"), "href");
+						//String detailUrl = tagNode.getAttributeByName("href");
+						//page.addUrl(detailUrl);
+						//System.out.println("detailUrl="+detailUrl);
+						if(url != null){
+							//电视剧详情页url携带播放增量信息
+							page.addUrl((url+"@"+daynumber));
+						}						
 					}
 				}
 			} catch (XPatherException e) {
@@ -76,13 +91,16 @@ public class YOUKUProcessService implements IProcessService {
 		 page.setSupportnumber(supportnumber);
 		 //System.out.println(" 赞:"+supportnumber);
 		 
-		 page.setDaynumber("0");
+		 //page.setDaynumber("0");
 		 page.setAgainstnumber("0");
 		 page.setCollectnumber("0");
 		 
 		 //获取优酷电视剧id
 		 Pattern pattern = Pattern.compile(LoadPropertyUtil.getYOUKU("idRegex"), Pattern.DOTALL);
 		 page.setTvId("youku_"+RegexUtil.getPageInfoByRegex(page.getUrl(), pattern, 1));
+		 
+		 //获取优酷电视TvName
+		 page.setTvname(HtmlUtil.getFieldByRegex(rootNode, LoadPropertyUtil.getYOUKU("parseTvName"), LoadPropertyUtil.getYOUKU("commonRegex")));
 	}
 
 }
