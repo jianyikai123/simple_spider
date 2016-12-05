@@ -15,4 +15,11 @@ public class ThreadUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	public static void main(String[] args) {
+		while(true){
+			System.out.println((long)(Math.random() *5000));
+		}
+		
+	}
 }

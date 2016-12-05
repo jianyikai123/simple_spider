@@ -21,7 +21,7 @@ public class YOUKUProcessService implements IProcessService {
 	public void process(Page page) {
 		// TODO Auto-generated method stub
 		
-		System.out.println("正在解析优酷页面信息！！！！！！！！！！！！！！！");
+		//System.out.println("正在解析优酷页面信息！！！！！！！！！！！！！！！");
 		String content = page.getContent();
 		
 		HtmlCleaner htmlCleaner = new HtmlCleaner();

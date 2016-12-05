@@ -1,5 +1,6 @@
 package com.dajiangtai.djt_spider.start;
 
+import java.net.InetAddress;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -7,6 +8,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.curator.RetryPolicy;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.ZooDefs.Ids;
 
 import com.dajiangtai.djt_spider.entity.Page;
 import com.dajiangtai.djt_spider.service.IDownLoadService;
@@ -23,6 +30,7 @@ import com.dajiangtai.djt_spider.service.impl.RedisRepositoryService;
 import com.dajiangtai.djt_spider.service.impl.YOUKUProcessService;
 import com.dajiangtai.djt_spider.util.LoadPropertyUtil;
 import com.dajiangtai.djt_spider.util.ThreadUtil;
+import com.dajiangtai.djt_spider.zookeeper.ZKUtil;
 
 /**
  * 电视剧爬虫执行入口类
@@ -42,7 +50,27 @@ public class StartDSJCount {
 	
 	//固定线程池
 	private ExecutorService newFixedThreadPool = Executors.newFixedThreadPool(Integer.parseInt(LoadPropertyUtil.getConfig("threadNum")));
-
+	
+	//构造函数  建立连接
+	public StartDSJCount() {
+		//重试策略:重试3次，每次间隔时间指数增长(有具体增长公式)	
+		RetryPolicy retryPolicy = new ExponentialBackoffRetry(1000, 3);
+		//zk地址
+		String hosts = ZKUtil.ZOOKEEPER_HOSTS;
+		CuratorFramework client = CuratorFrameworkFactory.newClient(hosts, retryPolicy);
+		//建立连接
+		client.start();
+		try {
+			//获取本地ip地址
+			InetAddress localHost = InetAddress.getLocalHost();
+			String ip = localHost.getHostAddress();
+			//每启动一个爬虫应用，创建一个临时节点，子节点名称为当前ip
+			client.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL)
+				.withACL(Ids.OPEN_ACL_UNSAFE).forPath(ZKUtil.PATH+"/"+ip);
+		} catch (Exception e) {
+		}
+		
+	}
 	/**
 	 * @param args
 	 */
@@ -128,7 +156,7 @@ public class StartDSJCount {
 							StartDSJCount.this.storePageInfo(page);
 						}
 						
-						ThreadUtil.sleep(Long.parseLong(LoadPropertyUtil.getConfig("millions_3")));
+						ThreadUtil.sleep((long) (Math.random() * 5000));
 					}
 					
 				});								
