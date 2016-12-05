@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.HttpHostConnectException;
@@ -27,8 +28,6 @@ public class PageDownLoadUtil {
 		HttpClientBuilder builder = HttpClients.custom();
 		CloseableHttpClient client = null;
 		/******************设置动态ip***********************/
-		//String proxy_ip = "182.90.28.52";
-		//int proxy_port = 80;
 		RedisUtil redisUtil = new RedisUtil();
 		//获取代理ip
 		String ip_port = redisUtil.getSet("proxy");
@@ -37,7 +36,7 @@ public class PageDownLoadUtil {
 			String proxy_ip = arr[0];
 			int proxy_port = Integer.parseInt(arr[1]);
 			//设置代理
-			HttpHost proxy = new HttpHost(proxy_ip, proxy_port);
+			HttpHost proxy = new HttpHost(proxy_ip,proxy_port );
 			client = builder.setProxy(proxy).build();
 		}else{
 			client = builder.build();
@@ -52,6 +51,7 @@ public class PageDownLoadUtil {
 			CloseableHttpResponse response = client.execute(request);
 			HttpEntity  entity = response.getEntity();
 			content = EntityUtils.toString(entity);
+			//System.out.println(content);
 		} catch(HttpHostConnectException e){
 			e.printStackTrace();
 			//如果当前ip不可用，从动态代理ip库里面删除
@@ -71,9 +71,9 @@ public class PageDownLoadUtil {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		RedisUtil redisUtil = new RedisUtil();		
-		redisUtil.addSet("proxy", "60.168.245.128:808");
-		redisUtil.addSet("proxy", "110.73.4.87:8123");
-		redisUtil.addSet("proxy", "59.37.199.227:9797");
+		//redisUtil.addSet("proxy", "182.90.43.23:8888");
+		System.out.println(redisUtil.getSet("proxy"));
+		
 	}
 
 }
