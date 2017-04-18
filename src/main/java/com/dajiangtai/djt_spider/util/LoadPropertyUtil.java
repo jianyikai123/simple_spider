@@ -55,5 +55,6 @@ public class LoadPropertyUtil {
 
 	public static void main(String[] args) {
 		System.out.println(getConfig("threadNum"));
+		System.out.println(getYOUKU("commonRegex"));
 	}
 }

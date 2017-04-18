@@ -27,4 +27,9 @@ public class MatchUtil {
 		}
 		return topDomain;
 	}
+	
+	public static void main(String[] args) {
+		String host = MatchUtil.getTopDomain("http://shiju.tax861.gov.cn/nsfw/sscx/sgs.asp#");
+		System.out.println(host);
+	}
 }
