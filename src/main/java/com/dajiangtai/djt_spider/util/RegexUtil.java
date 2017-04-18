@@ -1,4 +1,4 @@
-package com.dajiangtai.djt_spider.util;
+﻿package com.dajiangtai.djt_spider.util;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +15,6 @@ public class RegexUtil {
 		 if(matcher.find()){
 			 return matcher.group(groupNo).trim();
 		 }
-		return "0";
+		return "0"; //jianyikai
 	}
 }
